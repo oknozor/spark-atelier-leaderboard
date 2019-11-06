@@ -40,7 +40,8 @@ class TeamComponent extends React.Component {
 
         if (index !== -1) {
             let newState = this.state.teams;
-            newState[index] = stepCompletion
+            teamToUpdate.stepCount = stepCompletion.stepCount
+            newState[index] = teamToUpdate
             this.setState({ teams: newState })
         } else {
             console.error("No such team!")
@@ -59,7 +60,13 @@ class TeamComponent extends React.Component {
             headers: { "Accept": "application/json", "Content-Type": "application/json" },
             method: "GET",
         }).then((response) => response.json())
-            .then(json => this.setState({ teams: json }))
+            .then(teams => {
+                let teamsWithColor = teams.map(team => Team.ToTeam(team))
+                this.setState({
+                    teams: teamsWithColor
+                })
+                console.log(teamsWithColor)
+            })
             .catch((err) => console.error(err));
     }
 

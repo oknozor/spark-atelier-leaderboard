@@ -16,9 +16,7 @@ class BarChart extends React.Component {
           },
         }
       },
-      colors: ['#33b2df', '#546E7A', '#d4526e', '#13d8aa', '#A5978B', '#2b908f', '#f9a3a4', '#90ee7e',
-        '#f48024', '#69d2e7'
-      ],
+      colors: this.props.teams.map(team => team.color),
       dataLabels: {
         enabled: true,
         textAnchor: 'start',
@@ -70,10 +68,10 @@ class BarChart extends React.Component {
       }
       },
       series: [{
-        data: this.props.teams.map(team => team.score)
+        data: this.props.teams.map(team => team.stepCount * 50)
       }],
     }
-    console.log("BarChart state :" + this.state)
+
     return (
       <div id="chart">
         <ReactApexChart options={chart.options} series={chart.series} type="bar" height="350" />
