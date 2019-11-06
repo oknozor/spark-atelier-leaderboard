@@ -1,7 +1,9 @@
 import React from 'react';
 import EventBus from 'vertx3-eventbus-client'
-import BarChart from './BarChart.js'
+
+import BarChart from './BarChart'
 import Team from '../model/Team'
+import Notify from './Notifier'
 
 class TeamComponent extends React.Component {
     constructor(props) {
@@ -98,13 +100,18 @@ class TeamComponent extends React.Component {
             });
 
             this.eventbus.registerHandler('step.failure', (error, stepFailure) => {
-                console.log("team" + stepFailure.body.teamId + "failed current step, SHAME! " + stepFailure.body)
+                let message = "Team " + stepFailure.body.name + " failed current step, SHAME! "
+                Notify(message)
             });
         }
     }
 
     render() {
-        return (<BarChart teams={this.state.teams} />);
+        return (
+            <div>
+                <BarChart teams={this.state.teams} />
+            </div>
+        );
     }
 }
 
