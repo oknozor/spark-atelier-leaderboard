@@ -13,14 +13,13 @@ import java.util.logging.Logger;
 
 import static org.univ.sparktp.dashboard.Adresses.*;
 
-class TeamHandler {
+class TeamHandler extends AbstractVerticle {
   private static final Logger logger = Logger.getLogger(TeamHandler.class.getName());
 
-  private Vertx vertx;
+  private EventBus eventBus;
 
-  TeamHandler(Vertx vertx) {
-    this.vertx = vertx;
-  }
+  TeamHandler(EventBus eventBus) {
+    this.eventBus = eventBus;}
 
   void createTeam(RoutingContext context) {
 
@@ -28,13 +27,12 @@ class TeamHandler {
     Team newTeam = IN_MEMORY_TEAMS.add(new Team(teamName));
 
     logger.info("forwarding message to eventbus");
-    vertx.eventBus().send(TEAM_REGISTRATION_ADDR, context.getBodyAsJson());
+    eventBus.publish(TEAM_REGISTRATION_ADDR, JsonObject.mapFrom(newTeam));
 
-    HttpServerResponse response = context.response();
-    response.putHeader("content-type", "application/json");
-    response.setStatusCode(201);
-
-    response.end(JsonObject.mapFrom(newTeam).toString());
+    context.response()
+           .putHeader("content-type", "application/json")
+           .setStatusCode(201)
+           .end(JsonObject.mapFrom(newTeam).toString());
   }
 
   void getTeams(RoutingContext context) {
@@ -45,40 +43,36 @@ class TeamHandler {
          .map(JsonObject::mapFrom)
          .forEach(jsonResponse::add);
 
-    HttpServerResponse response = context.response();
-    response.putHeader("content-type", "application/json");
-    response.setStatusCode(200);
-
-    response.end(jsonResponse.toString());
+    context.response()
+           .putHeader("content-type", "application/json")
+           .setStatusCode(200)
+           .end(jsonResponse.toString());
   }
 
   void onStepCompleted(RoutingContext context) {
     String teamId = context.request().getParam("id");
+    Team team = IN_MEMORY_TEAMS.byId(Integer.parseInt(teamId));
+    team.nextStep();
 
     logger.info("forwarding message to eventbus");
-    vertx.eventBus().send(STEP_COMPLETION_ADDR, stepCompletionMessage(teamId));
 
-    HttpServerResponse response = context.response();
-    response.putHeader("content-type", "application/json");
-    response.setStatusCode(204);
-    response.end();
+    eventBus.publish(STEP_COMPLETION_ADDR, JsonObject.mapFrom(team));
+
+    context.response()
+           .setStatusCode(204)
+           .end();
   }
 
   void onStepFailed(RoutingContext context) {
     String teamId = context.request().getParam("id");
+    Team team = IN_MEMORY_TEAMS.byId(Integer.parseInt(teamId));
 
     logger.info("forwarding message to eventbus");
 
-    vertx.eventBus().send(STEP_FAILURE_ADDR, stepCompletionMessage(teamId));
+    eventBus.publish(STEP_FAILURE_ADDR, JsonObject.mapFrom(team));
 
-    HttpServerResponse response = context.response();
-    response.putHeader("content-type", "application/json");
-    response.setStatusCode(204);
-    response.end();
-  }
-
-  private JsonObject stepCompletionMessage(String id) {
-    return new JsonObject()
-      .put("teamId", Integer.parseInt(id));
+    context.response()
+           .setStatusCode(204)
+           .end();
   }
 }

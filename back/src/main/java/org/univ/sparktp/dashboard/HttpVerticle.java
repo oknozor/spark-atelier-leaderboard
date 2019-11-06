@@ -31,7 +31,7 @@ public class HttpVerticle extends AbstractVerticle {
     logger.info("Starting Http verticle on port : 8080");
 
     HttpServer server = vertx.createHttpServer();
-    TeamHandler teamHandler = new TeamHandler(this.vertx);
+    TeamHandler teamHandler = new TeamHandler(vertx.eventBus());
 
     Router router = Router.router(vertx);
     router.route().handler(BodyHandler.create());
@@ -53,8 +53,8 @@ public class HttpVerticle extends AbstractVerticle {
 
     router.post("/teams").handler(teamHandler::createTeam);
     router.get("/teams").handler(teamHandler::getTeams);
-    router.post("/team/:id/completeStep").handler(teamHandler::onStepCompleted);
-    router.post("/team/:id/failStep").handler(teamHandler::onStepFailed);
+    router.post("/teams/:id/completeStep").handler(teamHandler::onStepCompleted);
+    router.post("/teams/:id/failStep").handler(teamHandler::onStepFailed);
 
 
     BridgeOptions permitted = new BridgeOptions().addOutboundPermitted(new PermittedOptions().setAddress(STEP_COMPLETION_ADDR))

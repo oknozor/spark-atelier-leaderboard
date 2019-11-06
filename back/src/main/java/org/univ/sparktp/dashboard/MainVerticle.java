@@ -12,5 +12,6 @@ public class MainVerticle extends AbstractVerticle {
   public void start(Future<Void> startFuture)  {
 
     vertx.deployVerticle(HttpVerticle.class, new DeploymentOptions());
+    vertx.deployVerticle(DummyListenerVerticle.class, new DeploymentOptions());
   }
 }
