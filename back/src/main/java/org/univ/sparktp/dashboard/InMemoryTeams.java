@@ -34,4 +34,8 @@ class InMemoryTeams {
   List<Team> getTeams() {
     return teams;
   }
+
+  Team byId(Integer id) {
+    return this.teams.get(id);
+  }
 }
