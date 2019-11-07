@@ -1,11 +1,10 @@
 import React from 'react';
-import EventBus from 'vertx3-eventbus-client'
+import Team from "../model/Team";
+import EventBus from "vertx3-eventbus-client";
+import Notify from "./Notifier";
+import LeaderboardModule from "./LeaderboardModule";
 
-import BarChart from './BarChart'
-import Team from '../model/Team'
-import Notify from './Notifier'
-
-class TeamComponent extends React.Component {
+class Leaderboard extends React.Component {
     constructor(props) {
         super(props)
         this.eventbus = null;
@@ -108,11 +107,18 @@ class TeamComponent extends React.Component {
 
     render() {
         return (
-            <div>
-                <BarChart teams={this.state.teams} />
+            <div className="table">
+                <div className="table-cell">
+                    <ul className="leader">
+                        <div id="decoration"></div>
+                        <div id="decoration2"></div>
+                        <div id="decoration3"></div>
+                        {this.state.teams.map(team => <LeaderboardModule team={team}/>)}
+                    </ul>
+                </div>
             </div>
         );
     }
 }
 
-export default TeamComponent;
+export default Leaderboard;

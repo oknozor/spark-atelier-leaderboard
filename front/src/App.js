@@ -3,12 +3,11 @@ import React from 'react';
 import ReactNotifications from 'react-notifications-component';
 
 import Notifier from './components/Notifier';
-import TeamComponent from './components/TeamComponent.js';
+import Leaderboard from "./components/Leaderboard";
 
 class App extends React.Component {
-  constructor() {
-    super()
-
+  constructor(props, context) {
+    super(props, context);
     this.state = {
       notification: "",
     }
@@ -17,7 +16,8 @@ class App extends React.Component {
   render() {
     return (
       <div className="App">
-        <TeamComponent />
+        {/*<TeamComponent />*/}
+        <Leaderboard/>
         <Notifier />
         <ReactNotifications />
       </div>
