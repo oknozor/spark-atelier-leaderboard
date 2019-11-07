@@ -6,11 +6,11 @@ import java.io.Serializable;
 public class Team implements Serializable {
   private Integer id;
   private String name;
-  private Integer score;
+  private Integer stepCount;
 
   public Team(String name) {
     this.name = name;
-    this.score = 0;
+    this.stepCount = 0;
   }
 
   public Integer getId() {
@@ -21,8 +21,8 @@ public class Team implements Serializable {
     return name;
   }
 
-  public Integer getScore() {
-    return score;
+  public Integer getStepCount() {
+    return stepCount;
   }
 
   public void setId(Integer id) {
@@ -30,6 +30,6 @@ public class Team implements Serializable {
   }
 
   public void nextStep() {
-    this.score += 50;
+    this.stepCount += 1;
   }
 }
