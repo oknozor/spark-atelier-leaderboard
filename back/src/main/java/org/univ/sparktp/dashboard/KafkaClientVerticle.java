@@ -3,6 +3,7 @@ package org.univ.sparktp.dashboard;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Promise;
 import io.vertx.core.eventbus.EventBus;
+import io.vertx.core.json.Json;
 import io.vertx.core.json.JsonObject;
 import io.vertx.kafka.client.consumer.KafkaConsumer;
 import org.univ.sparktp.dashboard.model.twitter.Tweet;
@@ -38,7 +39,7 @@ public class KafkaClientVerticle extends AbstractVerticle {
       if (tweet.getId() != 0) {
         // For now we just send raw tweet to the event bus
         // We might want to enrich the data later on
-        eb.publish(Adresses.TWITTER_INFO, tweet);
+        eb.publish(Adresses.TWITTER_INFO, JsonObject.mapFrom(tweet));
         logger.info(tweet.toString());
       }
     });

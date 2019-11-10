@@ -98,6 +98,11 @@ class Leaderboard extends React.Component {
                 this.completeStep(message.body)
             });
 
+            this.eventbus.registerHandler('twitter.info', (error, message) => {
+                console.log(message.body)
+                console.log(error)
+            });
+
             this.eventbus.registerHandler('step.failure', (error, stepFailure) => {
                 let message = "Team " + stepFailure.body.name + " failed current step, SHAME! "
                 Notify(message)

@@ -60,8 +60,10 @@ public class HttpVerticle extends AbstractVerticle {
     BridgeOptions permitted = new BridgeOptions().addOutboundPermitted(new PermittedOptions().setAddress(STEP_COMPLETION_ADDR))
                                                  .addOutboundPermitted(new PermittedOptions().setAddress(STEP_FAILURE_ADDR))
                                                  .addOutboundPermitted(new PermittedOptions().setAddress(TEAM_REGISTRATION_ADDR))
+                                                 .addOutboundPermitted(new PermittedOptions().setAddress(TWITTER_INFO))
                                                  .addInboundPermitted(new PermittedOptions().setAddress(STEP_COMPLETION_ADDR))
                                                  .addInboundPermitted(new PermittedOptions().setAddress(STEP_FAILURE_ADDR))
+                                                 .addInboundPermitted(new PermittedOptions().setAddress(TWITTER_INFO))
                                                  .addInboundPermitted(new PermittedOptions().setAddress(TEAM_REGISTRATION_ADDR));
 
     // Create a bridge between the eventbus and the frontend websocket
