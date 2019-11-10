@@ -13,5 +13,6 @@ public class MainVerticle extends AbstractVerticle {
 
     vertx.deployVerticle(HttpVerticle.class, new DeploymentOptions());
     vertx.deployVerticle(DummyListenerVerticle.class, new DeploymentOptions());
+    vertx.deployVerticle(KafkaClientVerticle.class, new DeploymentOptions());
   }
 }
