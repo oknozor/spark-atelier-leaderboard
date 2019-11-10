@@ -12,6 +12,7 @@
     "react-dom": "^16.11.0",
     "react-notifications-component": "^2.2.3",
     "react-scripts": "3.2.0",
+    "react-window": "^1.8.5",
     "vertx3-eventbus-client": "^3.8.3"
   },
   "scripts": {

@@ -18,7 +18,6 @@ class Leaderboard extends React.Component {
     }
 
     addTeam(team) {
-        console.log(team)
         let maybeNewTeam = this.getTeam(team.id)
 
         // is maybeNewTeam is undefine we can process and register the new team
@@ -36,7 +35,6 @@ class Leaderboard extends React.Component {
     // replace a team with the one sent on the eventbus
     completeStep(stepCompletion) {
         let teamToUpdate = this.getTeam(stepCompletion.id)
-        console.log("preparing to update" + teamToUpdate)
         let index = this.state.teams.indexOf(teamToUpdate);
 
         if (index !== -1) {
@@ -66,7 +64,6 @@ class Leaderboard extends React.Component {
                 this.setState({
                     teams: teamsWithColor
                 })
-                console.log(teamsWithColor)
             })
             .catch((err) => console.error(err));
     }
