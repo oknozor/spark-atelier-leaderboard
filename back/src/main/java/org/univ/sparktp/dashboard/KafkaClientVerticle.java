@@ -2,6 +2,7 @@ package org.univ.sparktp.dashboard;
 
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Promise;
+import io.vertx.core.eventbus.EventBus;
 import io.vertx.core.json.JsonObject;
 import io.vertx.kafka.client.consumer.KafkaConsumer;
 import org.univ.sparktp.dashboard.model.twitter.Tweet;
@@ -18,6 +19,8 @@ public class KafkaClientVerticle extends AbstractVerticle {
   @Override
   public void start(Promise<Void> startPromise) throws Exception {
 
+    EventBus eb = vertx.eventBus();
+
     Map<String, String> config = new HashMap<>();
     config.put("bootstrap.servers", "localhost:9092");
     config.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
@@ -33,6 +36,9 @@ public class KafkaClientVerticle extends AbstractVerticle {
 
       // Message with id 0 are errored so we ignore them
       if (tweet.getId() != 0) {
+        // For now we just send raw tweet to the event bus
+        // We might want to enrich the data later on
+        eb.publish(Adresses.TWITTER_INFO, tweet);
         logger.info(tweet.toString());
       }
     });
