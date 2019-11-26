@@ -2,9 +2,7 @@ package org.univ.sparktp.dashboard;
 
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Promise;
-import io.vertx.core.eventbus.EventBus;
 import io.vertx.core.http.HttpServer;
-import io.vertx.core.http.HttpServerResponse;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.bridge.PermittedOptions;
 import io.vertx.ext.web.Router;
@@ -12,11 +10,8 @@ import io.vertx.ext.web.handler.BodyHandler;
 import io.vertx.ext.web.handler.CorsHandler;
 import io.vertx.ext.web.handler.sockjs.BridgeOptions;
 import io.vertx.ext.web.handler.sockjs.SockJSHandler;
-import org.univ.sparktp.dashboard.model.Team;
 
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.logging.Logger;
 
 import static org.univ.sparktp.dashboard.Adresses.*;
@@ -28,7 +23,7 @@ public class HttpVerticle extends AbstractVerticle {
   @Override
   public void start(Promise<Void> startPromise) {
 
-    logger.info("Starting Http verticle on port : 8080");
+    logger.info(String.format("Starting Http verticle on port : %d", config().getInteger("port")));
 
     HttpServer server = vertx.createHttpServer();
     TeamHandler teamHandler = new TeamHandler(vertx.eventBus());
@@ -37,8 +32,9 @@ public class HttpVerticle extends AbstractVerticle {
     router.route().handler(BodyHandler.create());
 
 
+    JsonObject webSocketConfig = config().getJsonObject("websocket.client");
     // TODO: add sock js url to configuration
-    router.route().handler(CorsHandler.create("http://localhost:3000")
+    router.route().handler(CorsHandler.create("http://" + webSocketConfig.getString("host") + ":" +  webSocketConfig.getInteger("port"))
                                       .allowedMethod(io.vertx.core.http.HttpMethod.GET)
                                       .allowedMethod(io.vertx.core.http.HttpMethod.POST)
                                       .allowedMethod(io.vertx.core.http.HttpMethod.PUT)
@@ -60,8 +56,10 @@ public class HttpVerticle extends AbstractVerticle {
     BridgeOptions permitted = new BridgeOptions().addOutboundPermitted(new PermittedOptions().setAddress(STEP_COMPLETION_ADDR))
                                                  .addOutboundPermitted(new PermittedOptions().setAddress(STEP_FAILURE_ADDR))
                                                  .addOutboundPermitted(new PermittedOptions().setAddress(TEAM_REGISTRATION_ADDR))
+                                                 .addOutboundPermitted(new PermittedOptions().setAddress(TWITTER_INFO))
                                                  .addInboundPermitted(new PermittedOptions().setAddress(STEP_COMPLETION_ADDR))
                                                  .addInboundPermitted(new PermittedOptions().setAddress(STEP_FAILURE_ADDR))
+                                                 .addInboundPermitted(new PermittedOptions().setAddress(TWITTER_INFO))
                                                  .addInboundPermitted(new PermittedOptions().setAddress(TEAM_REGISTRATION_ADDR));
 
     // Create a bridge between the eventbus and the frontend websocket
@@ -70,7 +68,7 @@ public class HttpVerticle extends AbstractVerticle {
 
     router.route("/eventbus/*").handler(sockJSHandler);
 
-    server.requestHandler(router).listen(8080);
+    server.requestHandler(router).listen(config().getInteger("port"));
   }
 }
 

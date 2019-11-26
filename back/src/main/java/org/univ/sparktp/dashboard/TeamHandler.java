@@ -8,7 +8,6 @@ import io.vertx.ext.web.RoutingContext;
 import org.univ.sparktp.dashboard.model.Team;
 
 
-import java.util.List;
 import java.util.logging.Logger;
 
 import static org.univ.sparktp.dashboard.Adresses.*;
@@ -19,60 +18,95 @@ class TeamHandler extends AbstractVerticle {
   private EventBus eventBus;
 
   TeamHandler(EventBus eventBus) {
-    this.eventBus = eventBus;}
+    this.eventBus = eventBus;
+  }
 
   void createTeam(RoutingContext context) {
 
     String teamName = context.getBodyAsJson().getString("name");
-    Team newTeam = IN_MEMORY_TEAMS.add(new Team(teamName));
+    eventBus.request(DB_CREATE_TEAM, teamName, ar -> {
+      if (ar.succeeded()) {
+        JsonObject newTeam = (JsonObject) ar.result().body();
+        logger.info("forwarding message to eventbus");
+        eventBus.publish(TEAM_REGISTRATION_ADDR, JsonObject.mapFrom(newTeam));
 
-    logger.info("forwarding message to eventbus");
-    eventBus.publish(TEAM_REGISTRATION_ADDR, JsonObject.mapFrom(newTeam));
-
-    context.response()
-           .putHeader("content-type", "application/json")
-           .setStatusCode(201)
-           .end(JsonObject.mapFrom(newTeam).toString());
+        context.response()
+               .putHeader("content-type", "application/json")
+               .setStatusCode(201)
+               .end(newTeam.toString());
+      } else {
+        notFound(context);
+      }
+    });
   }
 
   void getTeams(RoutingContext context) {
-    List<Team> teams = IN_MEMORY_TEAMS.getTeams();
+    eventBus.request(DB_GET_ALL_TEAMS, "ok", ar -> {
+      logger.info("Sending request");
 
-    JsonArray jsonResponse = new JsonArray();
-    teams.stream()
-         .map(JsonObject::mapFrom)
-         .forEach(jsonResponse::add);
+      if (ar.succeeded()) {
+        JsonArray teams = (JsonArray) ar.result().body();
+        logger.info(teams.toString());
 
-    context.response()
-           .putHeader("content-type", "application/json")
-           .setStatusCode(200)
-           .end(jsonResponse.toString());
+        context.response()
+               .putHeader("content-type", "application/json")
+               .setStatusCode(200)
+               .end(teams.toString());
+      } else {
+        internalError(context);
+      }
+    });
   }
 
   void onStepCompleted(RoutingContext context) {
     String teamId = context.request().getParam("id");
-    Team team = IN_MEMORY_TEAMS.byId(Integer.parseInt(teamId));
-    team.nextStep();
+    eventBus.request(DB_TEAM_BY_ID, Integer.parseInt(teamId), ar -> {
+      if (ar.succeeded()) {
+        JsonObject team = (JsonObject) ar.result().body();
+        logger.info(team.toString());
+        Team updatedTeam = team.mapTo(Team.class);
+        updatedTeam.nextStep();
 
-    logger.info("forwarding message to eventbus");
+        eventBus.request(DB_SAVE_TEAM, JsonObject.mapFrom(updatedTeam), update -> {
+          if (update.succeeded()) {
+            eventBus.publish(STEP_COMPLETION_ADDR, JsonObject.mapFrom(updatedTeam));
+            context.response()
+                   .setStatusCode(204)
+                   .end();
+          }
+        });
 
-    eventBus.publish(STEP_COMPLETION_ADDR, JsonObject.mapFrom(team));
-
-    context.response()
-           .setStatusCode(204)
-           .end();
+      } else {
+        notFound(context);
+      }
+    });
   }
 
   void onStepFailed(RoutingContext context) {
     String teamId = context.request().getParam("id");
-    Team team = IN_MEMORY_TEAMS.byId(Integer.parseInt(teamId));
+    eventBus.request(DB_TEAM_BY_ID, Integer.parseInt(teamId), ar -> {
+      if (ar.succeeded()) {
+        JsonObject team = (JsonObject) ar.result().body();
+        eventBus.publish(STEP_FAILURE_ADDR, JsonObject.mapFrom(team));
 
-    logger.info("forwarding message to eventbus");
+        context.response()
+               .setStatusCode(204)
+               .end();
+      } else {
+        notFound(context);
+      }
+    });
+  }
 
-    eventBus.publish(STEP_FAILURE_ADDR, JsonObject.mapFrom(team));
-
+  private void notFound(RoutingContext context) {
     context.response()
-           .setStatusCode(204)
+           .setStatusCode(404)
+           .end();
+  }
+
+  private void internalError(RoutingContext context) {
+    context.response()
+           .setStatusCode(500)
            .end();
   }
 }

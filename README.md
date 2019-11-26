@@ -2,6 +2,9 @@
 
 ## Run
 
+#### Dependency
+
+Before getting started you need to setup [this project](https://github.com/oknozor/caffe_clope_kafka)
 #### Backend
 - `git clone ...`
 - `cd spark-atelier-leaderboard/back`
@@ -38,6 +41,10 @@ On step completion a team earns 50 points. Steps have no identifier, either you 
  "score" : 0
 }
 ```
+
+#### Streams
+
+![](./docs/stream_diagram.png)
 
 ### Todo: 
 

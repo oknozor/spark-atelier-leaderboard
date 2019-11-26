@@ -1,33 +1,19 @@
 package org.univ.sparktp.dashboard.model;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+
 import java.io.Serializable;
 
-// TODO : not used yet but we will need it for validation & persistence
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class Team implements Serializable {
   private Integer id;
   private String name;
   private Integer stepCount;
-
-  public Team(String name) {
-    this.name = name;
-    this.stepCount = 0;
-  }
-
-  public Integer getId() {
-    return id;
-  }
-
-  public String getName() {
-    return name;
-  }
-
-  public Integer getStepCount() {
-    return stepCount;
-  }
-
-  public void setId(Integer id) {
-    this.id = id;
-  }
 
   public void nextStep() {
     this.stepCount += 1;

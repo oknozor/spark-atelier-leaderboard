@@ -6,7 +6,7 @@ import io.vertx.core.eventbus.EventBus;
 
 public class DummyListenerVerticle extends AbstractVerticle {
   @Override
-  public void start(Future<Void> startFuture) throws Exception {
+  public void start(Future<Void> startFuture) {
     EventBus eb = vertx.eventBus();
 
     eb.consumer(Adresses.STEP_COMPLETION_ADDR, message -> System.out.println("I have received a step completion message: " + message.body()));
