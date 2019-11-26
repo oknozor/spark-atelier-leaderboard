@@ -3,7 +3,6 @@ package org.univ.sparktp.dashboard;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Promise;
 import io.vertx.core.eventbus.EventBus;
-import io.vertx.core.json.Json;
 import io.vertx.core.json.JsonObject;
 import io.vertx.kafka.client.consumer.KafkaConsumer;
 import org.univ.sparktp.dashboard.model.twitter.Tweet;
@@ -18,12 +17,16 @@ public class KafkaClientVerticle extends AbstractVerticle {
   private static final Logger logger = Logger.getLogger(KafkaClientVerticle.class.getName());
 
   @Override
-  public void start(Promise<Void> startPromise) throws Exception {
+  public void start(Promise<Void> startPromise) {
 
     EventBus eb = vertx.eventBus();
 
     Map<String, String> config = new HashMap<>();
-    config.put("bootstrap.servers", "localhost:9092");
+
+    String kafkaAdress = config().getString("host") + ":" + config().getInteger("port");
+
+    config.put("bootstrap.servers", kafkaAdress);
+
     config.put("key.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
     config.put("value.deserializer", "org.apache.kafka.common.serialization.StringDeserializer");
     config.put("group.id", "twitter_group");

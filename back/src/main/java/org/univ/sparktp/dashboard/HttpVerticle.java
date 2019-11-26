@@ -28,7 +28,7 @@ public class HttpVerticle extends AbstractVerticle {
   @Override
   public void start(Promise<Void> startPromise) {
 
-    logger.info("Starting Http verticle on port : 8080");
+    logger.info(String.format("Starting Http verticle on port : %d", config().getInteger("port")));
 
     HttpServer server = vertx.createHttpServer();
     TeamHandler teamHandler = new TeamHandler(vertx.eventBus());
@@ -37,8 +37,9 @@ public class HttpVerticle extends AbstractVerticle {
     router.route().handler(BodyHandler.create());
 
 
+    JsonObject webSocketConfig = config().getJsonObject("websocket.client");
     // TODO: add sock js url to configuration
-    router.route().handler(CorsHandler.create("http://localhost:3000")
+    router.route().handler(CorsHandler.create("http://" + webSocketConfig.getString("host") + ":" +  webSocketConfig.getInteger("port"))
                                       .allowedMethod(io.vertx.core.http.HttpMethod.GET)
                                       .allowedMethod(io.vertx.core.http.HttpMethod.POST)
                                       .allowedMethod(io.vertx.core.http.HttpMethod.PUT)
@@ -72,7 +73,7 @@ public class HttpVerticle extends AbstractVerticle {
 
     router.route("/eventbus/*").handler(sockJSHandler);
 
-    server.requestHandler(router).listen(8080);
+    server.requestHandler(router).listen(config().getInteger("port"));
   }
 }
 

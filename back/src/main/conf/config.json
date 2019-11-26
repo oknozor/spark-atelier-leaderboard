@@ -1,0 +1,23 @@
+{
+
+  "http": {
+    "port" : 8080,
+    "websocket.client": {
+      "host" : "localhost",
+      "port" : 3000
+    }
+  },
+
+  "database" : {
+    "host": "localhost",
+    "database" : "sparkdash",
+    "user": "sparkdash",
+    "password" : "sparkdash",
+    "port": 5342
+  },
+
+  "kafka" : {
+    "host": "localhost",
+    "port": 9092
+  }
+}

@@ -51,6 +51,11 @@
       <artifactId>vertx-kafka-client</artifactId>
       <version>3.8.3</version>
     </dependency>
+    <dependency>
+      <groupId>io.vertx</groupId>
+      <artifactId>vertx-pg-client</artifactId>
+      <version>3.8.3</version>
+    </dependency>
 
     <dependency>
       <groupId>org.projectlombok</groupId>
