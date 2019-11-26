@@ -1,5 +1,5 @@
-CREATE USER sprkdash;
-CREATE DATABASE sparkdash with owner sparkdash;
+CREATE USER sparkdash WITH PASSWORD 'sparkdash';
+CREATE DATABASE sparkdash WITH OWNER = sparkdash ENCODING = 'UTF8' TABLESPACE = pg_default;
 
 CREATE table team (
     id bigserial primary key,

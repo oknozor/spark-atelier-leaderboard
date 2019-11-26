@@ -2,9 +2,7 @@ package org.univ.sparktp.dashboard;
 
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.Promise;
-import io.vertx.core.eventbus.EventBus;
 import io.vertx.core.http.HttpServer;
-import io.vertx.core.http.HttpServerResponse;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.bridge.PermittedOptions;
 import io.vertx.ext.web.Router;
@@ -12,11 +10,8 @@ import io.vertx.ext.web.handler.BodyHandler;
 import io.vertx.ext.web.handler.CorsHandler;
 import io.vertx.ext.web.handler.sockjs.BridgeOptions;
 import io.vertx.ext.web.handler.sockjs.SockJSHandler;
-import org.univ.sparktp.dashboard.model.Team;
 
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.logging.Logger;
 
 import static org.univ.sparktp.dashboard.Adresses.*;
