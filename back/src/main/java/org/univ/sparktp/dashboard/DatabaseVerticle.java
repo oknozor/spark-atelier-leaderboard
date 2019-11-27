@@ -76,9 +76,9 @@ public class DatabaseVerticle extends AbstractVerticle {
 
   private void update(Message<JsonObject> teamMessage) {
     Integer teamId = teamMessage.body().getInteger("id");
-    Integer count = teamMessage.body().getInteger("stepCount");
+    Integer stepId = teamMessage.body().getInteger("currentStepId");
 
-    client.preparedQuery("UPDATE team SET stepcount = $1 WHERE id = $2 RETURNING *", Tuple.of(count, teamId), ar -> {
+    client.preparedQuery("UPDATE team SET current_step_id = $1 WHERE id = $2 RETURNING *", Tuple.of(stepId, teamId), ar -> {
       if (ar.succeeded()) {
 
         JsonObject team = teamFromRow(ar);

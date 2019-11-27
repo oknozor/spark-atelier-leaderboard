@@ -4,18 +4,10 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-
-import java.io.Serializable;
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Team implements Serializable {
+public class Step {
   private Integer id;
-  private String name;
-  private Integer currentStepId;
-
-  public void nextStep() {
-    this.currentStepId += 1;
-  }
+  private Integer points;
 }
