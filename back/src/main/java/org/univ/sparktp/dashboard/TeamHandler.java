@@ -1,7 +1,9 @@
 package org.univ.sparktp.dashboard;
 
+import io.vertx.codegen.annotations.Nullable;
 import io.vertx.core.AbstractVerticle;
 import io.vertx.core.eventbus.EventBus;
+import io.vertx.core.http.HttpServerResponse;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.RoutingContext;
@@ -14,12 +16,28 @@ import static org.univ.sparktp.dashboard.Adresses.*;
 
 class TeamHandler extends AbstractVerticle {
   private static final Logger logger = Logger.getLogger(TeamHandler.class.getName());
-
+  private final String authSecret = "xFeGdHjhqsixiZBUntXvSTGGMfsIzOcshZIVxWVoxnjWyzDXhTxHyiwbnoZnTVttFgJFCglnmHYyLhWSverHWCPMGSsumXPkyuWV";
   private EventBus eventBus;
 
   TeamHandler(EventBus eventBus) {
     this.eventBus = eventBus;
   }
+
+  void authHandler(RoutingContext context) {
+    HttpServerResponse response = context.response();
+    response.setChunked(true);
+
+    @Nullable String auth = context.request().headers().get("auth");
+
+    if (auth != null && auth.equals(authSecret)) {
+      context.next();
+    } else {
+      context.response()
+             .setStatusCode(401)
+             .end();
+    }
+  }
+
 
   void createTeam(RoutingContext context) {
 

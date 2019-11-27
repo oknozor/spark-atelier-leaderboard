@@ -46,7 +46,7 @@ public class HttpVerticle extends AbstractVerticle {
                                       .allowedHeader("Content-Type"));
 
 
-
+    router.route("/teams").order(0).handler(teamHandler::authHandler);
     router.post("/teams").handler(teamHandler::createTeam);
     router.get("/teams").handler(teamHandler::getTeams);
     router.post("/teams/:id/completeStep").handler(teamHandler::onStepCompleted);
