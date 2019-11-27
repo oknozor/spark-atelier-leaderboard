@@ -70,9 +70,12 @@ class TeamHandler extends AbstractVerticle {
         eventBus.request(DB_SAVE_TEAM, JsonObject.mapFrom(updatedTeam), update -> {
           if (update.succeeded()) {
             eventBus.publish(STEP_COMPLETION_ADDR, JsonObject.mapFrom(updatedTeam));
+            JsonObject jsonTeam = (JsonObject) update.result().body();
+
             context.response()
-                   .setStatusCode(204)
-                   .end();
+                   .putHeader("content-type", "application/json")
+                   .setStatusCode(200)
+                   .end(jsonTeam.toString());
           }
         });
 
@@ -90,7 +93,7 @@ class TeamHandler extends AbstractVerticle {
         eventBus.publish(STEP_FAILURE_ADDR, JsonObject.mapFrom(team));
 
         context.response()
-               .setStatusCode(204)
+               .setStatusCode(200)
                .end();
       } else {
         notFound(context);
