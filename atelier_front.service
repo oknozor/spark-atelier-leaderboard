@@ -1,0 +1,5 @@
+[Service]
+ExecStart=/usr/local/bin/serve -s /root/spark-atelier-leaderboard/front/build
+
+[Unit]
+Wants=network-online.target

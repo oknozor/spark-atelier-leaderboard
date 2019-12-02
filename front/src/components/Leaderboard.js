@@ -55,7 +55,7 @@ class Leaderboard extends React.Component {
 
     // Get the current state on start
     fetchTeamOnStart() {
-        fetch("http://localhost:8080/teams", {
+        fetch("http://spark-leaderboard.hoohoot.org/teams", {
             headers: { "Accept": "application/json", "Content-Type": "application/json" },
             method: "GET",
         }).then((response) => response.json())
@@ -81,7 +81,7 @@ class Leaderboard extends React.Component {
             vertxbus_randomization_factor: 0.5 // Randomization factor between 0 and 1
         };
 
-        this.eventbus = new EventBus('http://localhost:8080/eventbus', options)
+        this.eventbus = new EventBus('http://spark-leaderboard/eventbus', options)
         this.eventbus.enableReconnect(true)
 
         this.eventbus.onopen = () => {

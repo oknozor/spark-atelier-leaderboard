@@ -1,0 +1,5 @@
+[Service]
+ExecStart=/usr/bin/java -jar /root/spark-atelier-leaderboard/back/target/dashboard-1.0.0-SNAPSHOT-fat.jar -conf /root/spark-atelier-leaderboard/back/config.json 
+
+[Unit]
+Wants=network-online.target

@@ -37,3 +37,7 @@ CREATE table team
     name            text,
     current_step_id int default 0
 );
+
+GRANT ALL PRIVILEGES ON TABLE team TO sparkdash;
+GRANT ALL PRIVILEGES ON TABLE team_id_seq TO sparkdash;
+GRANT ALL PRIVILEGES ON TABLE step TO sparkdash;
