@@ -34,7 +34,7 @@ public class HttpVerticle extends AbstractVerticle {
 
     JsonObject webSocketConfig = config().getJsonObject("websocket.client");
     // TODO: add sock js url to configuration
-    router.route().handler(CorsHandler.create("http://spark-leaderboard.hoohoot.org/")
+    router.route().order(0).handler(CorsHandler.create(webSocketConfig.getString("host") + "/*")
                                       .allowedMethod(io.vertx.core.http.HttpMethod.GET)
                                       .allowedMethod(io.vertx.core.http.HttpMethod.POST)
                                       .allowedMethod(io.vertx.core.http.HttpMethod.PUT)
@@ -42,11 +42,12 @@ public class HttpVerticle extends AbstractVerticle {
                                       .allowCredentials(true)
                                       .allowedHeader("Access-Control-Allow-Method")
                                       .allowedHeader("Access-Control-Allow-Origin")
+                                      .allowedHeader("auth")
                                       .allowedHeader("Access-Control-Allow-Credentials")
                                       .allowedHeader("Content-Type"));
 
 
-    router.route("/teams").order(0).handler(teamHandler::authHandler);
+    router.route("/teams").handler(teamHandler::authHandler);
     router.post("/teams").handler(teamHandler::createTeam);
     router.get("/teams").handler(teamHandler::getTeams);
     router.post("/teams/:id/completeStep").handler(teamHandler::onStepCompleted);

@@ -56,7 +56,12 @@ class Leaderboard extends React.Component {
     // Get the current state on start
     fetchTeamOnStart() {
         fetch("http://spark-leaderboard-backend.hoohoot.org/teams", {
-            headers: { "Accept": "application/json", "Content-Type": "application/json", "Access-Control-Allow-Origin" : "*"},
+            headers: {
+                "Accept": "application/json",
+                "Content-Type": "application/json",
+                "auth": "xFeGdHjhqsixiZBUntXvSTGGMfsIzOcshZIVxWVoxnjWyzDXhTxHyiwbnoZnTVttFgJFCglnmHYyLhWSverHWCPMGSsumXPkyuWV"
+            },
+            credentials: 'include',
             method: "GET",
         }).then((response) => response.json())
             .then(teams => {
@@ -81,7 +86,7 @@ class Leaderboard extends React.Component {
             vertxbus_randomization_factor: 0.5 // Randomization factor between 0 and 1
         };
 
-        this.eventbus = new EventBus('http://spark-leaderboard/eventbus', options)
+        this.eventbus = new EventBus('http://spark-leaderboard-backend.hoohoot.org/eventbus', options)
         this.eventbus.enableReconnect(true)
 
         this.eventbus.onopen = () => {
@@ -117,7 +122,7 @@ class Leaderboard extends React.Component {
                         <div id="decoration3"></div>
                         {this.state.teams
                             .sort((team1, team2) => team2.stepCount - team1.stepCount)
-                            .map(team => <LeaderboardModule team={team}/>)}
+                            .map(team => <LeaderboardModule team={team} />)}
                     </ul>
                 </div>
             </div>
