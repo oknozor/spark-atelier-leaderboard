@@ -55,8 +55,8 @@ class Leaderboard extends React.Component {
 
     // Get the current state on start
     fetchTeamOnStart() {
-        fetch("http://spark-leaderboard.hoohoot.org/teams", {
-            headers: { "Accept": "application/json", "Content-Type": "application/json" },
+        fetch("http://spark-leaderboard-backend.hoohoot.org/teams", {
+            headers: { "Accept": "application/json", "Content-Type": "application/json", "Access-Control-Allow-Origin" : "*"},
             method: "GET",
         }).then((response) => response.json())
             .then(teams => {

@@ -34,7 +34,7 @@ public class HttpVerticle extends AbstractVerticle {
 
     JsonObject webSocketConfig = config().getJsonObject("websocket.client");
     // TODO: add sock js url to configuration
-    router.route().handler(CorsHandler.create("http://" + webSocketConfig.getString("host") + ":" +  webSocketConfig.getInteger("port"))
+    router.route().handler(CorsHandler.create("http://spark-leaderboard.hoohoot.org/")
                                       .allowedMethod(io.vertx.core.http.HttpMethod.GET)
                                       .allowedMethod(io.vertx.core.http.HttpMethod.POST)
                                       .allowedMethod(io.vertx.core.http.HttpMethod.PUT)
