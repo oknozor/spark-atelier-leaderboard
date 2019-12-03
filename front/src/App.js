@@ -1,9 +1,11 @@
 import './App.css';
 import React from 'react';
 import ReactNotifications from 'react-notifications-component';
-
+import banner from './assets/banner.png'
 import Notifier from './components/Notifier';
 import Leaderboard from "./components/Leaderboard";
+import { Animated } from "react-animated-css";
+
 
 class App extends React.Component {
   constructor(props, context) {
@@ -16,7 +18,9 @@ class App extends React.Component {
   render() {
     return (
       <div className="App">
-        {/*<TeamComponent />*/}
+        <Animated animationIn="bounceInLeft" animationOut="fadeOut" isVisible={true}>
+          <header><img src={banner}></img> </header>
+        </Animated>
         <Leaderboard/>
         <Notifier />
         <ReactNotifications />
