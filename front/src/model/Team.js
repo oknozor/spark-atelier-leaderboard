@@ -1,14 +1,9 @@
 class Team {
-    constructor(id, name) {
-        this.id = id
-        this.name = name;
-        this.stepCount = 0;
-    }
-
-    static ToTeam(team) {
-        let toTeam = new Team(team.id, team.name)
-        toTeam.stepCount = team.stepCount
-        return toTeam
+    constructor(team) {
+        this.id = team.id
+        this.name = team.name;
+        this.stepCount = team.currenStepId;
+        this.score = team.score === undefined ? 0 : team.score;
     }
 }
 

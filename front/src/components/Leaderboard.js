@@ -22,7 +22,7 @@ class Leaderboard extends React.Component {
 
         // is maybeNewTeam is undefine we can process and register the new team
         if (maybeNewTeam === undefined) {
-            let newTeam = new Team(team.id, team.name);
+            let newTeam = new Team(team);
             this.setState({
                 teams: [...this.state.teams, newTeam]
             })
@@ -36,12 +36,12 @@ class Leaderboard extends React.Component {
     completeStep(stepCompletion) {
         let teamToUpdate = this.getTeam(stepCompletion.id)
         let index = this.state.teams.indexOf(teamToUpdate);
-
+        console.log(stepCompletion)
         if (index !== -1) {
             let newState = this.state.teams;
-            teamToUpdate.stepCount = stepCompletion.stepCount
-            newState[index] = teamToUpdate
+            newState[index] = new Team(stepCompletion)
             this.setState({ teams: newState })
+            console.log(newState)
         } else {
             console.error("No such team!")
         }
@@ -55,7 +55,7 @@ class Leaderboard extends React.Component {
 
     // Get the current state on start
     fetchTeamOnStart() {
-        fetch("http://spark-leaderboard-backend.hoohoot.org/teams", {
+        fetch("http://localhost:8080/teams", {
             headers: {
                 "Accept": "application/json",
                 "Content-Type": "application/json",
@@ -65,10 +65,8 @@ class Leaderboard extends React.Component {
             method: "GET",
         }).then((response) => response.json())
             .then(teams => {
-                let teamsWithColor = teams.map(team => Team.ToTeam(team))
-                this.setState({
-                    teams: teamsWithColor
-                })
+                console.log(teams)
+                this.setState({ teams: teams.map(team => new Team(team)) })
             })
             .catch((err) => console.error(err));
     }
@@ -86,17 +84,19 @@ class Leaderboard extends React.Component {
             vertxbus_randomization_factor: 0.5 // Randomization factor between 0 and 1
         };
 
-        this.eventbus = new EventBus('http://spark-leaderboard-backend.hoohoot.org/eventbus', options)
+        this.eventbus = new EventBus('http://localhost:8080/eventbus', options)
         this.eventbus.enableReconnect(true)
 
         this.eventbus.onopen = () => {
             console.log("connected to vertx event bus!")
 
             this.eventbus.registerHandler('team.register', (error, message) => {
+                console.log(message)
                 this.addTeam(message.body)
             });
 
             this.eventbus.registerHandler('step.completion', (error, message) => {
+                console.info(message)
                 this.completeStep(message.body)
             });
 
@@ -121,8 +121,8 @@ class Leaderboard extends React.Component {
                         <div id="decoration2"></div>
                         <div id="decoration3"></div>
                         {this.state.teams
-                            .sort((team1, team2) => team2.stepCount - team1.stepCount)
-                            .map((team, idx) => <LeaderboardModule team={team} rank={idx} />)}
+                            .sort((team1, team2) => team2.score - team1.score)
+                            .map((team, idx) => <LeaderboardModule team={team} rank={idx + 1} />)}
                     </ul>
                 </div>
             </div>

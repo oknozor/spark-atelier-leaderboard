@@ -87,8 +87,8 @@ class TeamHandler extends AbstractVerticle {
 
         eventBus.request(DB_SAVE_TEAM, JsonObject.mapFrom(updatedTeam), update -> {
           if (update.succeeded()) {
-            eventBus.publish(STEP_COMPLETION_ADDR, JsonObject.mapFrom(updatedTeam));
             JsonObject jsonTeam = (JsonObject) update.result().body();
+            eventBus.publish(STEP_COMPLETION_ADDR, jsonTeam);
 
             context.response()
                    .putHeader("content-type", "application/json")
