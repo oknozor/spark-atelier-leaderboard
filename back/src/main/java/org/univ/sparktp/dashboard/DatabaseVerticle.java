@@ -14,6 +14,7 @@ import io.vertx.sqlclient.Row;
 import io.vertx.sqlclient.RowSet;
 import io.vertx.sqlclient.Tuple;
 import org.univ.sparktp.dashboard.model.Team;
+import org.univ.sparktp.dashboard.model.TeamDto;
 
 
 import java.util.logging.Logger;
@@ -78,10 +79,12 @@ public class DatabaseVerticle extends AbstractVerticle {
     Integer teamId = teamMessage.body().getInteger("id");
     Integer stepId = teamMessage.body().getInteger("currentStepId");
 
-    client.preparedQuery("UPDATE team SET current_step_id = $1 WHERE id = $2 RETURNING *", Tuple.of(stepId, teamId), ar -> {
+    client.preparedQuery("WITH team AS (UPDATE team SET current_step_id = $1 WHERE id = $2 " +
+                           "RETURNING name, id, current_step_id) SELECT * FROM team, step " +
+                           "WHERE team.id = $2 AND step.id = team.current_step_id", Tuple.of(stepId, teamId), ar -> {
       if (ar.succeeded()) {
 
-        JsonObject team = teamFromRow(ar);
+        JsonObject team = teamWithScoreFromRow(ar);
         teamMessage.reply(team);
       } else {
         logger.info("Failure: " + ar.cause().getMessage());
@@ -92,14 +95,17 @@ public class DatabaseVerticle extends AbstractVerticle {
 
   private void getAll(Message<String> getAllTeamMessages) {
 
-    client.preparedQuery("SELECT * FROM team", ar -> {
+    client.preparedQuery("SELECT team.id, team.name, team.current_step_id, step.points " +
+                           "FROM TEAM JOIN step " +
+                           "ON team.current_step_id = step.id " +
+                           "ORDER BY step.points DESC", ar -> {
       JsonArray teams = new JsonArray();
       if (ar.succeeded()) {
         RowSet<Row> rows = ar.result();
         logger.info("Got " + rows.size() + " rows ");
 
         for (Row row : rows) {
-          Team team = new Team(row.getInteger(0), row.getString(1), row.getInteger(2));
+          TeamDto team = new TeamDto(row.getInteger(0), row.getString(1), row.getInteger(2), row.getInteger(3));
           teams.add(JsonObject.mapFrom(team));
           logger.info(JsonObject.mapFrom(team).toString());
         }
@@ -135,6 +141,18 @@ public class DatabaseVerticle extends AbstractVerticle {
     for (Row row : rows) {
       Team team = new Team(row.getInteger(0), row.getString(1), row.getInteger(2));
       teams.add(JsonObject.mapFrom(team));
+    }
+
+    return teams.getJsonObject(0);
+  }
+
+  private JsonObject teamWithScoreFromRow(AsyncResult<RowSet<Row>> ar) {
+    JsonArray teams = new JsonArray();
+    RowSet<Row> rows = ar.result();
+    for (Row row : rows) {
+      TeamDto team = new TeamDto(row.getInteger(1),row.getString(0), row.getInteger(2), row.getInteger(4));
+      teams.add(JsonObject.mapFrom(team));
+      logger.info(JsonObject.mapFrom(team).toString());
     }
 
     return teams.getJsonObject(0);

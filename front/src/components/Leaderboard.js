@@ -122,7 +122,7 @@ class Leaderboard extends React.Component {
                         <div id="decoration3"></div>
                         {this.state.teams
                             .sort((team1, team2) => team2.stepCount - team1.stepCount)
-                            .map(team => <LeaderboardModule team={team} />)}
+                            .map((team, idx) => <LeaderboardModule team={team} rank={idx} />)}
                     </ul>
                 </div>
             </div>
