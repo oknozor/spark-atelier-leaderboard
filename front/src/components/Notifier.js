@@ -12,7 +12,7 @@ function Notify(content) {
     animationIn: ["animated", "fadeIn"],     // animate.css classes that's applied
     animationOut: ["animated", "fadeOut"],   // animate.css classes that's applied
     dismiss: {
-      duration: 2000
+      duration: 10000
     }
   })
 
